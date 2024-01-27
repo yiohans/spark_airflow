@@ -1,0 +1,82 @@
+version: '3'
+
+x-spark-common: &spark-common
+  build:
+    context: .
+    dockerfile: Dockerfile.spark
+  volumes:
+    - ./jobs:/opt/spark/jobs
+  networks:
+    - spark_airflow
+
+x-airflow-common: &airflow-common
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow
+  environment:
+    AIRFLOW__CORE__LOAD_EXAMPLES: ${AIRFLOW__CORE__LOAD_EXAMPLES}
+    AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR}
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+    AIRFLOW__WEBSERVER_BASE_URL: ${AIRFLOW__WEBSERVER_BASE_URL}
+    AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
+  volumes:
+    - ./jobs:/opt/airflow/jobs
+    - ./dags:/opt/airflow/dags
+    - ./logs:/opt/airflow/logs
+  depends_on:
+    - postgres
+  networks:
+    - spark_airflow
+
+services:
+  spark-master:
+    <<: *spark-common
+    command: bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+
+  spark-worker:
+    <<: *spark-common
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MODE: worker
+      #SPARK_WORKER_CORES: 2
+      #SPARK_WORKER_MEMORY: 1g
+      SPARK_MASTER_URL: spark://spark-master:7077
+    deploy:
+      mode: replicated
+      replicas: 2
+
+  postgres:
+    image: postgres:15.0
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - spark_airflow
+
+  webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+    depends_on:
+      - scheduler
+
+  scheduler:
+    <<: *airflow-common
+    command: bash -c "airflow db migrate && airflow users create --username ${SCHEDULER_USER} --firstname ${SCHEDULER_FNAME} --lastname ${SCHEDULER_LNAME} --role ${SCHEDULER_ROLE} --email ${SCHEDULER_EMAIL} --password ${SCHEDULER_PASSWORD} && airflow scheduler"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8793"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 1m30s
+
+networks:
+  spark_airflow:
+    driver: bridge

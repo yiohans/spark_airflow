@@ -1,0 +1,10 @@
+FROM bitnami/spark:3.5-debian-11
+
+USER root
+RUN apt-get update && \
+    apt-get install -y wget && \
+    apt-get clean
+
+USER 1001
+RUN wget -q -nc --no-check-certificate https://repo1.maven.org/maven2/org/mongodb/mongodb-jdbc/2.0.3/mongodb-jdbc-2.0.3-all.jar -P /opt/bitnami/spark/jars && \
+    wget -q -nc --no-check-certificate https://repo1.maven.org/maven2/org/postgresql/postgresql/42.6.0/postgresql-42.6.0.jar -P /opt/bitnami/spark/jars
