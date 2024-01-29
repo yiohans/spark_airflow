@@ -5,6 +5,9 @@ RUN apt-get update && \
     apt-get install -y gcc python3-dev openjdk-11-jdk && \
     apt-get clean
 
+# Set HADOOP_CONF_DIR environment variable
+ENV HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop/
+
 USER airflow
 COPY requirements.txt /opt/airflow/
 RUN pip install -r requirements.txt

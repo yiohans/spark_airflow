@@ -36,4 +36,4 @@ SCHEDULER_EMAIL="Your Email"
 SCHEDULER_PASSWORD="Your Password"
 ```
 
-After that execute `./01_build_n_run.sh` and verify the logs. If you see an error about logs on scheduler container, stop the Docker Compose and execute `./log_dir_changes.sh`. 
+After that execute `./log_dir_changes.sh` to change permissions and ownership of log directory. Finishing that run `./01_build_n_run.sh` to build the containers.
