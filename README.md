@@ -14,17 +14,6 @@ POSTGRES_PASSWORD="Your Password"
 POSTGRES_DB="Your DB Name"
 
 #######################
-###     AIRFLOW     ###
-#######################
-
-AIRFLOW_UID=1000
-AIRFLOW__CORE__LOAD_EXAMPLES=False
-AIRFLOW__CORE__EXECUTOR=LocalExecutor
-AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-AIRFLOW__WEBSERVER_BASE_URL=http://localhost:8080
-AIRFLOW__WEBSERVER__SECRET_KEY="Your Secret Key"
-
-#######################
 ###    SCHEDULER    ###
 #######################
 
@@ -36,4 +25,4 @@ SCHEDULER_EMAIL="Your Email"
 SCHEDULER_PASSWORD="Your Password"
 ```
 
-After that execute `./log_dir_changes.sh` to change permissions and ownership of log directory. Finishing that run `./01_build_n_run.sh` to build the containers.
+After that execute `./01_build_n_run.sh`. That will permissions and ownership of log directory and build the containers.
