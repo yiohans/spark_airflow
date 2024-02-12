@@ -26,15 +26,6 @@ AIRFLOW__WEBSERVER_BASE_URL=http://localhost:8080
 AIRFLOW__WEBSERVER__SECRET_KEY="Your Secret Key"
 
 #######################
-###    SCHEDULER    ###
-#######################
-
-SCHEDULER_USER="Your Username"
-SCHEDULER_FNAME="Your First Name"
-SCHEDULER_LNAME="Your Last Name"
-SCHEDULER_ROLE=Admin
-SCHEDULER_EMAIL="Your Email"
-SCHEDULER_PASSWORD="Your Password"
 ```
 
-After that execute `./log_dir_changes.sh` to change permissions and ownership of log directory. Finishing that run `./01_build_n_run.sh` to build the containers.
+After that execute `./01_build_n_run.sh`. That will permissions and ownership of log directory and build the containers.
