@@ -3,5 +3,5 @@ logs/*
 !logs/.gitkeep
 __pycache__
 *:Zone.Identifier
-dags/*.py
-jobs/*.py
+dags/*
+jobs/*
