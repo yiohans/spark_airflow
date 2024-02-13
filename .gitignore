@@ -4,3 +4,4 @@ logs/*
 __pycache__
 *:Zone.Identifier
 dags/*.py
+jobs/*.py
