@@ -1,0 +1,12 @@
+{
+  "spark-conn": {
+    "conn_type": "spark",
+    "description": "",
+    "login": "",
+    "password": null,
+    "host": "spark://spark-master",
+    "port": 7077,
+    "schema": "",
+    "extra": "{\"queue\": \"local\", \"deploy-mode\": \"client\", \"spark-binary\": \"spark-submit\"}"
+  }
+}

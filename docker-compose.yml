@@ -20,10 +20,17 @@ x-airflow-common: &airflow-common
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: True
     AIRFLOW__WEBSERVER_BASE_URL: http://localhost:8080
     AIRFLOW__WEBSERVER__SECRET_KEY: 46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+  healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8974/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
   volumes:
     - ./jobs:/opt/airflow/jobs
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
+    - ./exports:/opt/airflow/exports
   depends_on:
     - postgres
   networks:
@@ -81,13 +88,7 @@ services:
   scheduler:
     <<: *airflow-common
     container_name: airflow-scheduler
-    command: bash -c "airflow db migrate && airflow users create --username ${SCHEDULER_USER} --firstname ${SCHEDULER_FNAME} --lastname ${SCHEDULER_LNAME} --role ${SCHEDULER_ROLE} --email ${SCHEDULER_EMAIL} --password ${SCHEDULER_PASSWORD} && airflow scheduler"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8974/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
+    command: bash -c "airflow db migrate && airflow users create --username ${SCHEDULER_USER} --firstname ${SCHEDULER_FNAME} --lastname ${SCHEDULER_LNAME} --role ${SCHEDULER_ROLE} --email ${SCHEDULER_EMAIL} --password ${SCHEDULER_PASSWORD} && airflow scheduler"    
     depends_on:
       postgres:
         condition: service_healthy
